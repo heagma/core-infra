@@ -1,13 +1,13 @@
 # edge-architecture
-Building multiple stacks with Pulumi and Go programming language
+Building multiple stacks with Pulumi and the Go programming language
 
 ## What is it for?
-This repo contains an example of infrastructure created using the Go programming language.
+This repo contains an example of infrastructure created using the Go programming language together ewith Pulumi IaC.
 
 It includes the "core-infra" resources that are needed to have the bare minimum to deploy right away (day 1) some initial services.
 
-The approach is to have a core-infra folder with all the required resources but have also a separated repository for all the new components that are added on day 2. 
-Those new resources can be a new S3 bucket , a new Lambda function or even a new service running on EKS but that needs to interact with some other AWS resources. 
+A day 2 operation is to add some more resources as per required and those are in a completeley different pulumi project/repository and not oin core-infra.
+Those new resources can be a new S3 bucket , a new Lambda function or even a new services running on EKS but that needs to interact with some other AWS resources.
 
 ## What is a bare minimum ?
 For different companies the bare minimum is most likely completely different, but many times, specially for start ups, an initial setup will require:
