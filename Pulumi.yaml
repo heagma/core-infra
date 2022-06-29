@@ -1,0 +1,3 @@
+name: core-infra
+runtime: go
+description: Resources necessary to spin a bare minimum infrastructure on AWS
