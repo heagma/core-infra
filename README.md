@@ -2,17 +2,17 @@
 Building Cloud resources with Pulumi and the Go programming language
 
 ## What is it for?
-This repo contains an example of infrastructure created using the Go programming language together ewith Pulumi IaC.
+This repo contains an example of infrastructure created using the Go programming language together with Pulumi IaC.
 
 It includes the "core-infra" resources that are needed to have the bare minimum to deploy right away (day 1) some initial services.
 
-A day 2 operation is to add some more resources as per required and those are in a completeley different pulumi project/repository and not oin core-infra.
-Those new resources can be a new S3 bucket , a new Lambda function or even a new services running on EKS but that needs to interact with some other AWS resources.
+A day 2 operation is to add some more resources as per required and those are in a completeley different pulumi project/repository and not in core-infra.
+Those new resources can be a new S3 bucket , a new Lambda function or even new services running on EKS but that needs to interact with some other AWS resources.
 
 ## What is a bare minimum ?
 For different companies the bare minimum is most likely completely different, but many times, specially for start ups, an initial setup will require:
 
-+ 3 Cloud Accounts. Separated in 2 organizations units (OU) for environemnt separation (dev, prd) and 1 Master Account.
++ 3 Cloud Accounts. Separated in 2 organizations units (OU) for environment separation (dev, prd) and 1 Master Account.
 + 2-4 Environments (dev, uat, stg, prd). This repo will use only dev and prd.
 + 2 Regions for production environment.
 + 2 AZ per Region.
