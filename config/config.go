@@ -1,4 +1,4 @@
-package vpc
+package config
 
 import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -6,8 +6,8 @@ import (
 	"strings"
 )
 
-//ConfigData struct to store our configuration data from the stack settings file
-type ConfigData struct {
+//DataConfig struct to store our configuration data from the stack settings file
+type DataConfig struct {
 	Env         string
 	RegionAlias string
 	VpcCidr     []string
@@ -16,9 +16,9 @@ type ConfigData struct {
 	Az          []string
 }
 
-//loadConfig function loads the config values from a settings file and
+//NewConfig function loads the config values from a settings file and
 //return a named parameter, in this case confData of type ConfigData
-func loadConfig(ctx *pulumi.Context) (confData ConfigData) {
+func NewConfig(ctx *pulumi.Context) (confData *DataConfig) {
 
 	//Load configurations
 	cfg := config.New(ctx, "")
@@ -32,15 +32,15 @@ type commonTags struct {
 	Env  string
 }
 
-//newInitialTags constructor creates some initial tags name that is used very often
-func newInitialTags() *commonTags {
+//NewInitialTags constructor creates some initial tags name that is used very often
+func NewInitialTags() *commonTags {
 	return &commonTags{Name: "Name", Env: "Env"}
 }
 
-var initialTags = newInitialTags()
+var InitialTags = NewInitialTags()
 
-//formatName function format the name with n parameters
-func formatName(values ...string) string {
+//FormatName function format the name with n parameters
+func FormatName(values ...string) string {
 	var name string
 	for _, value := range values {
 		name += value + "-"

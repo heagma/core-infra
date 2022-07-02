@@ -1,4 +1,4 @@
-module networkingandcontdelivery
+module core-infra
 
 go 1.18
 
