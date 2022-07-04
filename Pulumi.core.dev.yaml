@@ -1,0 +1,21 @@
+encryptionsalt: v1:Q5IpyH0ZRJ4=:v1:hpCJc0+JWCi9YIKr:xOGjzeNHqWlYI5CNrY/NIai+VimUXg==
+config:
+  aws-native:region: ap-east-1
+  core-infra:data:
+    az:
+      - ap-east-1a
+      - ap-east-1b
+      - ap-east-1c
+    env: dev
+    regionAlias: hk
+    subnetNames:
+      - prv-a
+      - pub-a
+      - prv-b
+      - pub-b
+      - prv-c
+      - pub-c
+    vpcCidr:
+      - 10.10.0.0/16
+    vpcNames:
+      - vpcOne
