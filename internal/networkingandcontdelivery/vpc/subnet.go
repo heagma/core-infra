@@ -2,7 +2,6 @@ package vpc
 
 import (
 	"core-infra/config"
-	"fmt"
 	"github.com/pulumi/pulumi-aws-native/sdk/go/aws/ec2"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -23,33 +22,29 @@ func CreateSubnet(ctx *pulumi.Context) error {
 	configEnv := cd.Env
 	configRegion := cd.RegionAlias
 
-	//we are setting 2 subnets (private and public) per az in the 3 az available.
-
 	//Loop through the exported vpc resources
 
 	for _, vpc := range VPC {
+		//we are setting 2 subnets (private and public) per az in the 3 az available.
+		for _, subnetName := range configSubnetNames {
 
-		//vpcResult := ec2.LookupVPCOutput(ctx, ec2.LookupVPCOutputArgs{
-		//	VpcId: vpc.VpcId,
-		//})
-
-		for index, azName := range configAz {
-			fmt.Printf("the AZ are: %[1]s\n", azName)
-
-			for _, subnetName := range configSubnetNames {
-				fmt.Println(subnetName)
+			for _, azName := range configAz {
 
 				//Define the names of each subnet resource. This is for logical resources (get id, arn etc.),
 				//physical names have a random suffix and also Create names (adding "-out" at the end of the vpc names)
 				//for ids to later be used as keys when exporting the resource
 
 				subnetLogicalNames = append(subnetLogicalNames, config.FormatName(configEnv, configRegion, azName, subnetName))
-				subnetOutputNames = append(subnetOutputNames, config.FormatName(subnetName, "out"))
+				subnetOutputNames = append(subnetOutputNames, config.FormatName(azName, subnetName, "out"))
+			}
+		}
 
-				fmt.Printf("logical names %[1]v\n", subnetLogicalNames[index])
-
+		//Loop through the logical names to create named subnets within each AZ
+		for _, subnetLogicalName := range subnetLogicalNames {
+			for _, azName := range configAz {
 				//Create our subnets taking the exported vpc id as parameters and the az taken from the config settings
-				subnet, err := ec2.NewSubnet(ctx, subnetLogicalNames[index], &ec2.SubnetArgs{
+				//here we assign the logical names at the same time unlike when creating our VPC
+				subnet, err := ec2.NewSubnet(ctx, subnetLogicalName, &ec2.SubnetArgs{
 					AvailabilityZone: pulumi.String(azName), VpcId: vpc.VpcId,
 				})
 
@@ -57,10 +52,11 @@ func CreateSubnet(ctx *pulumi.Context) error {
 					return err
 				}
 
-				ctx.Export(subnetOutputNames[index], subnet.ID())
+				ctx.Export(subnetLogicalName, subnet.ID())
+
+				break
 
 			}
-
 		}
 
 	}
