@@ -3,7 +3,9 @@ package vpc
 import (
 	"core-infra/config"
 	"errors"
+	"fmt"
 	"github.com/pulumi/pulumi-aws-native/sdk/go/aws/ec2"
+	cec2 "github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -15,15 +17,16 @@ var (
 
 //CreateVpc function for the Vpc class that wraps the Pulumi function that creates a new VPC resource
 func CreateVpc(ctx *pulumi.Context) error {
-	//Load configurations
 
+	//Load configurations
 	cd := config.NewConfig(ctx)
+
+	configEnv := cd.Env
+	configRegion := cd.RegionAlias
 
 	//Assign configurations related only to vpc
 	configVpcCidr := cd.VpcCidr
 	configVpcNames := cd.VpcNames
-	configEnv := cd.Env
-	configRegion := cd.RegionAlias
 
 	if len(configVpcCidr) < len(configVpcNames) || len(configVpcCidr) > len(configVpcNames) {
 		return errors.New("mismatch between the amount of vpc and the cidr configured")
@@ -52,6 +55,20 @@ func CreateVpc(ctx *pulumi.Context) error {
 		})
 
 		VPC = append(VPC, vpc)
+
+		if err != nil {
+			return err
+		}
+
+		//Create our Internet Gateway for each VPC using the classic aws provider (alias cec2) as aws-native does not
+		//provide attachment to vpc yet. We reassign the 'err' variable
+		_, err = cec2.NewInternetGateway(ctx, fmt.Sprintf("from-%[1]s", vpcLogicalName), &cec2.InternetGatewayArgs{
+			VpcId: vpc.ID(),
+			Tags: pulumi.StringMap{
+				config.InitialTags.Name: pulumi.String(fmt.Sprintf("from-%[1]s", vpcLogicalName)),
+				config.InitialTags.Env:  pulumi.String(configEnv),
+			},
+		})
 
 		if err != nil {
 			return err
