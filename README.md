@@ -18,6 +18,8 @@ For different companies the bare minimum is most likely completely different, bu
 + 2 AZ per Region.
 
 For testing environments requirements are usually less but for Production environment will have at minimum:
++ 2 Regions.
++ 3 Availability Zones.
 + 2 VPC. 1 on each Region:
     * 4 Subnets (2 Privates and 2 Publics). 2 on each AZ.
     * 4 Route Tables. 1 for each Subnet.
@@ -30,7 +32,7 @@ For testing environments requirements are usually less but for Production enviro
 + 4 S3 Buckets. 2 for each VPC.
 + 2 EC2. 1 on each VPC. Usually to act as a bastion/jump host. This does not include those EC2 required by the EKS clusters. 
 + 1 IAM admin account on each cloud account with Least Privilege to perform tasks required to initial set up.
-	* 2 roles to access the other cloud accounts (with switching roles). 
+    * 2 roles to access the other cloud accounts (with switching roles). 
 
 ### Pre-requisites
 - An AWS key/secret to perform the initial tasks of creating the S3 bucket to act as a backend for our Pulumi states.
