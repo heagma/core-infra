@@ -8,13 +8,16 @@ config:
       - ap-east-1c
     env: dev
     regionAlias: hk
-    subnetNames:
-      - prv-a
-      - pub-a
-      - prv-b
-      - pub-b
-      - prv-c
-      - pub-c
+    subnetTypes:
+      - private
+      - public
+    subnetCidr:
+      - 10.10.1.0/24
+      - 10.10.2.0/24
+      - 10.10.3.0/24
+      - 10.10.4.0/24
+      - 10.10.5.0/24
+      - 10.10.6.0/24
     vpcCidr:
       - 10.10.0.0/16
     vpcNames:
