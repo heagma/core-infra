@@ -9,10 +9,18 @@ func main() {
 
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		//Create my vpc
-		vpc.CreateVpc(ctx)
+		vpcErr := vpc.CreateVpc(ctx)
+
+		if vpcErr != nil {
+			return vpcErr
+		}
 
 		//Create our Subnets withing their respective VPC and AZ
-		vpc.CreateSubnet(ctx)
+		subnetErr := vpc.CreateSubnet(ctx)
+
+		if subnetErr != nil {
+			return subnetErr
+		}
 
 		return nil
 
