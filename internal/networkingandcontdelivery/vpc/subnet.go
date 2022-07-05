@@ -16,12 +16,13 @@ func CreateSubnet(ctx *pulumi.Context) error {
 	//Load configurations
 	cd := config.NewConfig(ctx)
 
+	configEnv := cd.Env
+	configRegion := cd.RegionAlias
+
+	//Assign configurations related only to vpc
 	configSubnetTypes := cd.SubnetTypes
 	configSubnetCidr := cd.SubnetCidr
 	configAz := cd.Az
-
-	configEnv := cd.Env
-	configRegion := cd.RegionAlias
 
 	//Loop through the exported vpc resources
 	for _, vpc := range VPC {
