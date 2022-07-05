@@ -12,7 +12,8 @@ type DataConfig struct {
 	RegionAlias string
 	VpcCidr     []string
 	VpcNames    []string
-	SubnetNames []string
+	SubnetTypes []string
+	SubnetCidr  []string
 	Az          []string
 }
 
