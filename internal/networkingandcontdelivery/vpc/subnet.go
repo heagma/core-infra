@@ -24,6 +24,9 @@ func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) (error, []*ec2.Subnet) {
 	configSubnetCidr := cd.SubnetCidr
 	configAz := cd.Az
 
+	//load initial tags
+	initialTags := config.NewInitialTags()
+
 	//Loop through the exported vpc resources
 	for _, vpc := range VPCs {
 		//we are setting 2 subnets (private and public) per az in the 3 az available.
@@ -50,10 +53,10 @@ func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) (error, []*ec2.Subnet) {
 					Tags: ec2.SubnetTagArrayInput(
 						ec2.SubnetTagArray{
 							ec2.SubnetTagArgs{
-								Key: pulumi.String(config.InitialTags.Name), Value: pulumi.String(subnetLogicalName),
+								Key: pulumi.String(initialTags.Name), Value: pulumi.String(subnetLogicalName),
 							},
 							ec2.SubnetTagArgs{
-								Key: pulumi.String(config.InitialTags.Env), Value: pulumi.String(configEnv),
+								Key: pulumi.String(initialTags.Env), Value: pulumi.String(configEnv),
 							},
 						},
 					),
