@@ -9,7 +9,7 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-//CreateVpc function for the Vpc class that wraps the Pulumi function that creates a new VPC resource
+//CreateVpc function creates a resource of type *ec2.VPC wraping the pulumi NewVPC constructor.
 func CreateVpc(ctx *pulumi.Context) (error, []*ec2.VPC) {
 	var (
 		VPC             []*ec2.VPC
