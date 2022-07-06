@@ -16,7 +16,7 @@ func CreateVpc(ctx *pulumi.Context) (error, []*ec2.VPC) {
 		vpcLogicalNames []string
 		vpcOutputNames  []string
 	)
-	
+
 	//Load configurations
 	cd := config.NewConfig(ctx)
 
@@ -26,6 +26,9 @@ func CreateVpc(ctx *pulumi.Context) (error, []*ec2.VPC) {
 	//Assign configurations related only to vpc
 	configVpcCidr := cd.VpcCidr
 	configVpcNames := cd.VpcNames
+
+	//load initial tags
+	initialTags := config.NewInitialTags()
 
 	if len(configVpcCidr) < len(configVpcNames) || len(configVpcCidr) > len(configVpcNames) {
 		return errors.New("mismatch between the amount of vpc and the cidr configured"), VPC
@@ -47,8 +50,8 @@ func CreateVpc(ctx *pulumi.Context) (error, []*ec2.VPC) {
 			EnableDnsHostnames: pulumi.Bool(true),
 			Tags: ec2.VPCTagArrayInput(
 				ec2.VPCTagArray{
-					ec2.VPCTagArgs{Key: pulumi.String(config.InitialTags.Name), Value: pulumi.String(vpcLogicalName)},
-					ec2.VPCTagArgs{Key: pulumi.String(config.InitialTags.Env), Value: pulumi.String(configEnv)},
+					ec2.VPCTagArgs{Key: pulumi.String(initialTags.Name), Value: pulumi.String(vpcLogicalName)},
+					ec2.VPCTagArgs{Key: pulumi.String(initialTags.Env), Value: pulumi.String(configEnv)},
 				},
 			),
 		})
@@ -64,8 +67,8 @@ func CreateVpc(ctx *pulumi.Context) (error, []*ec2.VPC) {
 		_, err = cec2.NewInternetGateway(ctx, fmt.Sprintf("from-%[1]s", vpcLogicalName), &cec2.InternetGatewayArgs{
 			VpcId: vpc.ID(),
 			Tags: pulumi.StringMap{
-				config.InitialTags.Name: pulumi.String(fmt.Sprintf("from-%[1]s", vpcLogicalName)),
-				config.InitialTags.Env:  pulumi.String(configEnv),
+				initialTags.Name: pulumi.String(fmt.Sprintf("from-%[1]s", vpcLogicalName)),
+				initialTags.Env:  pulumi.String(configEnv),
 			},
 		})
 
