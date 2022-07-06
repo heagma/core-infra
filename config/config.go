@@ -38,8 +38,6 @@ func NewInitialTags() *commonTags {
 	return &commonTags{Name: "Name", Env: "Env"}
 }
 
-var InitialTags = NewInitialTags()
-
 //FormatName function format the name with n parameters
 func FormatName(values ...string) string {
 	var name string
