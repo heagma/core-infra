@@ -6,12 +6,12 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-var (
-	subnetLogicalNames []string
-	subnetOutputNames  []string
-)
-
-func CreateSubnet(ctx *pulumi.Context) error {
+func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) (error, []*ec2.Subnet) {
+	var (
+		Subnets            []*ec2.Subnet
+		subnetLogicalNames []string
+		subnetOutputNames  []string
+	)
 
 	//Load configurations
 	cd := config.NewConfig(ctx)
@@ -25,7 +25,7 @@ func CreateSubnet(ctx *pulumi.Context) error {
 	configAz := cd.Az
 
 	//Loop through the exported vpc resources
-	for _, vpc := range VPC {
+	for _, vpc := range VPCs {
 		//we are setting 2 subnets (private and public) per az in the 3 az available.
 		for _, subnetType := range configSubnetTypes {
 			for _, azName := range configAz {
@@ -60,8 +60,10 @@ func CreateSubnet(ctx *pulumi.Context) error {
 				})
 
 				if err != nil {
-					return err
+					return err, Subnets
 				}
+
+				Subnets = append(Subnets, subnet)
 
 				ctx.Export(subnetLogicalName, subnet.ID())
 
@@ -72,5 +74,5 @@ func CreateSubnet(ctx *pulumi.Context) error {
 
 	}
 
-	return nil
+	return nil, Subnets
 }
