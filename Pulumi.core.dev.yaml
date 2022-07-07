@@ -11,14 +11,14 @@ config:
     subnetTypes:
       - private
       - public
-    subnetCidr:
+    subnetCidrs:
       - 10.10.1.0/24
       - 10.10.2.0/24
       - 10.10.3.0/24
       - 10.10.4.0/24
       - 10.10.5.0/24
       - 10.10.6.0/24
-    vpcCidr:
+    vpcCidrs:
       - 10.10.0.0/16
     vpcNames:
       - vpc
