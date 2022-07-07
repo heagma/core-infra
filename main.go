@@ -16,7 +16,7 @@ func main() {
 
 		}
 
-		//Create our Subnets withing their respective VPC and AZ
+		//Create our Subnets within their respective VPC and AZ
 		err, _ = vpc.CreateSubnet(ctx, VPCs)
 
 		if err != nil {
