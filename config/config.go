@@ -10,10 +10,10 @@ import (
 type DataConfig struct {
 	Env         string
 	RegionAlias string
-	VpcCidr     []string
+	VpcCidrs    []string
 	VpcNames    []string
 	SubnetTypes []string
-	SubnetCidr  []string
+	SubnetCidrs []string
 	Az          []string
 }
 
