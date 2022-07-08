@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) (error, []*ec2.Subnet) {
+func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) ([]*ec2.Subnet, error) {
 	var (
 		Subnets            []*ec2.Subnet
 		subnetLogicalNames []string
@@ -64,7 +64,7 @@ func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) (error, []*ec2.Subnet) {
 				})
 
 				if err != nil {
-					return err, Subnets
+					return nil, err
 				}
 
 				Subnets = append(Subnets, subnet)
@@ -89,7 +89,7 @@ func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) (error, []*ec2.Subnet) {
 							}),
 					})
 					if err != nil {
-						return err, Subnets
+						return nil, err
 					}
 				}
 
@@ -100,5 +100,5 @@ func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) (error, []*ec2.Subnet) {
 
 	}
 
-	return nil, Subnets
+	return Subnets, nil
 }
