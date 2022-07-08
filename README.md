@@ -1,18 +1,17 @@
-# edge-architecture
-Building Cloud resources with Pulumi and the Go programming language
+# edge-architecture - core-infra
+Building Cloud resources with Pulumi and the Go programming language.
 
 ## What is it for?
-This repo contains an example of infrastructure created using the Go programming language together with Pulumi IaC.
+This repo contains the core-infra example of infrastructure created using the Go programming language together with Pulumi IaC.
+It creates resources that are needed to have the bare minimum to deploy quickly (day 1) some initial services.
 
-It includes the "core-infra" resources that are needed to have the bare minimum to deploy right away (day 1) some initial services.
-
-A day 2 operation is to add some more resources as per required and those are in a completeley different pulumi project/repository and not in core-infra.
-Those new resources can be a new S3 bucket , a new Lambda function or even new services running on EKS but that needs to interact with some other AWS resources.
+A day 2 operation is to add some more resources/services as per required on the business logic and those should live in a different repository.
+Those new deployments can be a new S3 bucket , a new Lambda function or even new services running on EKS but that needs to interact with some other AWS resources.
 
 ## What is a bare minimum ?
-For different companies the bare minimum is most likely completely different, but many times, specially for start ups, an initial setup will require:
+For different companies the bare minimum is most likely completely different, but many times, specially for companies just starting uyp in the cloud, an initial setup will require:
 
-+ 3 Cloud Accounts. Separated in 2 organizations units (OU) for environment separation (dev, prd) and 1 Master Account.
++ 3 Accounts. Separated in 2 organizations units (OU) for environment separation (dev, prd) and 1 Master Account.
 + 2-4 Environments (dev, uat, stg, prd). This repo will use only dev and prd.
 + 2 Regions for production environment.
 + 2 AZ per Region.
@@ -40,6 +39,6 @@ For testing environments requirements are usually less but for Production enviro
 - Go v1.18+
 	
 #### Notes: 
-The approach is done creating all the resources by ourselves to have more control in a more deeper level. Instead of using this approach one could use Pulumi Croswalk that comes preconfigured with best practice to spin up a whole set of VPC (for example) but leaving some of the fine grained customization to the service itself.
+The approach is done creating all the resources by ourselves to have more control in a more deeper level (vpc/subnets/routes/). Instead of using this approach one could use Pulumi Croswalk that comes preconfigured with best practice to spin up a whole set of VPC (for example) but leaving some of the fine grained customization to the service itself.
 
 
