@@ -2,6 +2,7 @@ package main
 
 import (
 	"core-infra/internal/networkingandcontdelivery/vpc"
+	"fmt"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -12,7 +13,7 @@ func main() {
 		VPCs, err := vpc.CreateVpc(ctx)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("main: resource creation failed %[1]w", err)
 
 		}
 
@@ -20,7 +21,7 @@ func main() {
 		_, err = vpc.CreateSubnet(ctx, VPCs)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("main: resource creation failed %[1]w", err)
 		}
 
 		return nil
