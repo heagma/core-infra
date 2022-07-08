@@ -15,19 +15,19 @@ For different companies the bare minimum is most likely completely different, bu
 + 1 IAM admin account on each cloud account with the Least Privilege to perform tasks required for the initial set up.
     * 2 roles to access the other cloud accounts (role switching).
 + 2-4 Environments (dev, uat, stg, prd). This repo will use only dev and prd.
-+ 2 Regions for production environment.
++ 2 Regions for prd environment. Just 1 for dev.
 + 3 Availability Zones per region.
-+ 2 VPC. 1 on each Region:
-    * 4 Subnets (2 Privates and 2 Publics). 2 on each AZ.
-    * 4 Route Tables. 1 for each Subnet.
-    * 2 NAT Gateways. 1 on each Public Subnet.
++ 1 VPC on each Region:
+    * 6 Subnets (3 Privates and 3 Publics). 2 on each AZ.
+    * 6 Route Tables. 1 for each Subnet.
+    * 3 NAT Gateways. 1 on each Public Subnet.
     * 2 Internet Gateways. 1 for each VPC.
-+ 2 EKS Cluster. 1 per Region.
++ 1 EKS Cluster per Region.
     * 3 workers nodes on each cluster.
     * 1 ELB per EKS cluster.
-+ 2 EFS. 1 on each VPC. 
-+ 4 S3 Buckets. 2 for each VPC.
-+ 2 EC2. 1 on each VPC. To act as a bastion/jump host. This does not include those EC2 required by the EKS clusters. 
++ 1 EFS on each VPC. 
++ 2 S3 Buckets for each VPC.
++ 1 EC2 on each VPC. To act as a bastion/jump host. This does not include those EC2 required by the EKS clusters. 
  
 
 ### Pre-requisites
