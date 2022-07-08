@@ -18,7 +18,7 @@ For different companies the bare minimum is most likely completely different, bu
 + 2 Regions for prd environment. Just 1 for dev.
 + 3 Availability Zones per region.
 + 1 VPC on each Region:
-    * 2 Subnets on each of the the 3 AZ (3 Privates and 3 Publics).
+    * 2 Subnets on each of the 3 AZ (3 Privates and 3 Publics).
     * 1 Route Table for each Subnet.
     * 1 NAT Gateway on each Public Subnet.
     * 1 Internet Gateways for each VPC.
