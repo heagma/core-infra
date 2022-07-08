@@ -28,6 +28,7 @@ For different companies the bare minimum is most likely completely different, bu
 + 1 EFS on each VPC. 
 + 2 S3 Buckets for each VPC.
 + 1 EC2 on each VPC. To act as a bastion/jump host. This does not include those EC2 required by the EKS clusters. 
++ 1 RDS on each VPC.
  
 
 ### Pre-requisites
