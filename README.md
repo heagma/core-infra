@@ -1,4 +1,4 @@
-# edge-architecture - core-infra
+# edge-architecture (core-infra)
 Building Cloud resources with Pulumi and the Go programming language.
 
 ## What is it for?
@@ -18,10 +18,10 @@ For different companies the bare minimum is most likely completely different, bu
 + 2 Regions for prd environment. Just 1 for dev.
 + 3 Availability Zones per region.
 + 1 VPC on each Region:
-    * 6 Subnets (3 Privates and 3 Publics). 2 on each AZ.
-    * 6 Route Tables. 1 for each Subnet.
-    * 3 NAT Gateways. 1 on each Public Subnet.
-    * 2 Internet Gateways. 1 for each VPC.
+    * 2 Subnets on each of the the 3 AZ (3 Privates and 3 Publics).
+    * 1 Route Table for each Subnet.
+    * 1 NAT Gateway on each Public Subnet.
+    * 1 Internet Gateways for each VPC.
 + 1 EKS Cluster per Region.
     * 3 workers nodes on each cluster.
     * 1 ELB per EKS cluster.
