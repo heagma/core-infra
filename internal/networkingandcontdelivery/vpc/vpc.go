@@ -31,7 +31,7 @@ func CreateVpc(ctx *pulumi.Context) ([]*ec2.VPC, error) {
 	initialTags := config.NewInitialTags()
 
 	if len(configVpcCidrs) < len(configVpcNames) || len(configVpcCidrs) > len(configVpcNames) {
-		return VPC, errors.New("mismatch between the amount of vpc and the cidr configured")
+		return nil, errors.New("CreateVpc: mismatch between the amount of vpc and the cidr configured")
 	}
 
 	for _, vpcName := range configVpcNames {
@@ -57,7 +57,7 @@ func CreateVpc(ctx *pulumi.Context) ([]*ec2.VPC, error) {
 		})
 
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("CreateVpc: failed creating vpc resource %[1]w", err)
 		}
 
 		VPC = append(VPC, vpc)
@@ -73,7 +73,7 @@ func CreateVpc(ctx *pulumi.Context) ([]*ec2.VPC, error) {
 		})
 
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("CreateVpc: failed creating igw resource %[1]w", err)
 		}
 
 		ctx.Export(vpcOutputNames[index], vpc.ID())
