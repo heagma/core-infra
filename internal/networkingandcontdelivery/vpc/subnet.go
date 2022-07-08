@@ -64,7 +64,7 @@ func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) ([]*ec2.Subnet, error) {
 				})
 
 				if err != nil {
-					return nil, err
+					return nil, fmt.Errorf("CreateSubnet: failed creating subnet resource %[1]w", err)
 				}
 
 				Subnets = append(Subnets, subnet)
@@ -89,7 +89,7 @@ func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) ([]*ec2.Subnet, error) {
 							}),
 					})
 					if err != nil {
-						return nil, err
+						return nil, fmt.Errorf("CreateSubnet: failed creating nat gateway resource %[1]w", err)
 					}
 				}
 
