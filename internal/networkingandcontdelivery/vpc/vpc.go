@@ -10,7 +10,7 @@ import (
 )
 
 //CreateVpc function creates a resource of type *ec2.VPC wraping the pulumi NewVPC constructor.
-func CreateVpc(ctx *pulumi.Context) (error, []*ec2.VPC) {
+func CreateVpc(ctx *pulumi.Context) ([]*ec2.VPC, error) {
 	var (
 		VPC             []*ec2.VPC
 		vpcLogicalNames []string
@@ -31,7 +31,7 @@ func CreateVpc(ctx *pulumi.Context) (error, []*ec2.VPC) {
 	initialTags := config.NewInitialTags()
 
 	if len(configVpcCidrs) < len(configVpcNames) || len(configVpcCidrs) > len(configVpcNames) {
-		return errors.New("mismatch between the amount of vpc and the cidr configured"), VPC
+		return VPC, errors.New("mismatch between the amount of vpc and the cidr configured")
 	}
 
 	for _, vpcName := range configVpcNames {
@@ -57,7 +57,7 @@ func CreateVpc(ctx *pulumi.Context) (error, []*ec2.VPC) {
 		})
 
 		if err != nil {
-			return err, VPC
+			return nil, err
 		}
 
 		VPC = append(VPC, vpc)
@@ -73,11 +73,11 @@ func CreateVpc(ctx *pulumi.Context) (error, []*ec2.VPC) {
 		})
 
 		if err != nil {
-			return err, VPC
+			return nil, err
 		}
 
 		ctx.Export(vpcOutputNames[index], vpc.ID())
 	}
 
-	return nil, VPC
+	return VPC, nil
 }
