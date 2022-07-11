@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 # edge-architecture (core-infra)
 Building Cloud resources with Pulumi and the Go programming language.
+=======
+# core-infra
+Building Cloud resources with Pulumi and the Go programming language
+>>>>>>> develop
 
 ## What is it for?
 This repo contains the core-infra example of infrastructure created using the Go programming language together with Pulumi IaC.

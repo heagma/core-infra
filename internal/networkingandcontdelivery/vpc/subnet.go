@@ -4,11 +4,12 @@ import (
 	"core-infra/config"
 	"fmt"
 	"github.com/pulumi/pulumi-aws-native/sdk/go/aws/ec2"
+	cec2 "github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"strings"
 )
 
-func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) (error, []*ec2.Subnet) {
+func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) ([]*ec2.Subnet, error) {
 	var (
 		Subnets            []*ec2.Subnet
 		subnetLogicalNames []string
@@ -64,19 +65,34 @@ func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) (error, []*ec2.Subnet) {
 				})
 
 				if err != nil {
-					return err, Subnets
+					return nil, fmt.Errorf("CreateSubnet: failed creating subnet resource %[1]w", err)
 				}
 
 				Subnets = append(Subnets, subnet)
 
 				ctx.Export(subnetLogicalName, subnet.ID())
 
-				//Create NAT gateways inside the public subnets
+				//Attach a Nat gateway to each public subnet
 				if strings.HasSuffix(subnetLogicalName, "public") {
+
 					//Create an EIP first to be associated with the NATGateway
+					//Lets give our eip a temp name to be used as a logical name
+					eipTempName := config.FormatName(subnetLogicalName, "nat", "eip")
+
+					eip, err := cec2.NewEip(ctx, eipTempName, &cec2.EipArgs{
+						Tags: pulumi.StringMap{
+							initialTags.Name: pulumi.String(eipTempName),
+							initialTags.Env:  pulumi.String(configEnv),
+						},
+					})
+
+					if err != nil {
+						return nil, fmt.Errorf("CreateSubnet: failed creating eip resource %[1]w", err)
+					}
 
 					_, err = ec2.NewNatGateway(ctx, fmt.Sprintf("%[1]s-nat", subnetLogicalName), &ec2.NatGatewayArgs{
-						SubnetId: subnet.ID(),
+						SubnetId:     subnet.ID(),
+						AllocationId: eip.ID(),
 						Tags: ec2.NatGatewayTagArrayInput(
 							ec2.NatGatewayTagArray{
 								ec2.NatGatewayTagArgs{
@@ -89,7 +105,7 @@ func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) (error, []*ec2.Subnet) {
 							}),
 					})
 					if err != nil {
-						return err, Subnets
+						return nil, fmt.Errorf("CreateSubnet: failed creating nat gateway resource %[1]w", err)
 					}
 				}
 
@@ -100,5 +116,5 @@ func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) (error, []*ec2.Subnet) {
 
 	}
 
-	return nil, Subnets
+	return Subnets, nil
 }
