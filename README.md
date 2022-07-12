@@ -1,5 +1,5 @@
 # core-infra
-Building Cloud resources with Pulumi and the Go programming language
+Building Cloud resources with Pulumi and the Go programming language.
 
 ## What is it for?
 This repo contains an example of infrastructure created using the Go programming language together with Pulumi IaC.
