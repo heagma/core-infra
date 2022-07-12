@@ -9,9 +9,17 @@ import (
 	"strings"
 )
 
-func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) ([]*ec2.Subnet, error) {
+//CustomSubnet struct is a composite (not inheritance) struct that embed the ec2.Subnet struct
+//This allows us to create a new type of object that also include a name (there is no name field on ec2.Subnet) for our
+//subnets to be used as input in another caller instead of relying on ApplyT for Output<T> native from Pulumi.
+type CustomSubnet struct {
+	*ec2.Subnet
+	logicalName string
+}
+
+func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) ([]*CustomSubnet, error) {
 	var (
-		Subnets            []*ec2.Subnet
+		Subnets            []*CustomSubnet
 		subnetLogicalNames []string
 		subnetOutputNames  []string
 	)
@@ -68,7 +76,7 @@ func CreateSubnet(ctx *pulumi.Context, VPCs []*ec2.VPC) ([]*ec2.Subnet, error) {
 					return nil, fmt.Errorf("CreateSubnet: failed creating subnet resource %[1]w", err)
 				}
 
-				Subnets = append(Subnets, subnet)
+				Subnets = append(Subnets, &CustomSubnet{subnet, subnetLogicalName})
 
 				ctx.Export(subnetLogicalName, subnet.ID())
 

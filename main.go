@@ -24,6 +24,9 @@ func main() {
 			return fmt.Errorf("main: resource creation failed %[1]w", err)
 		}
 
+		//Attach route table to subnets
+		//_, err := vpc.
+
 		return nil
 
 	})
