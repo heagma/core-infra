@@ -18,7 +18,7 @@ type DataConfig struct {
 }
 
 //NewConfig function loads the config values from a settings file and
-//return a named parameter, in this case confData of type ConfigData
+//return a named parameter, in this case confData of DataConfig type
 func NewConfig(ctx *pulumi.Context) (confData *DataConfig) {
 
 	//Load configurations

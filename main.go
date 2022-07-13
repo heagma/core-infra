@@ -1,6 +1,7 @@
 package main
 
 import (
+	"core-infra/config"
 	"core-infra/internal/networkingandcontdelivery/vpc"
 	"fmt"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -9,8 +10,11 @@ import (
 func main() {
 
 	pulumi.Run(func(ctx *pulumi.Context) error {
+		//load 'global' configurations
+		cfg := config.NewConfig(ctx)
+
 		//Create my vpc
-		VPCs, err := vpc.CreateVpc(ctx)
+		VPCs, err := vpc.CreateVpc(ctx, cfg)
 
 		if err != nil {
 			return fmt.Errorf("main: resource creation failed %[1]w", err)
@@ -18,7 +22,14 @@ func main() {
 		}
 
 		//Create our Subnets within their respective VPC and AZ. We also create their respective NAT gateways
-		_, err = vpc.CreateSubnet(ctx, VPCs)
+		subnets, err := vpc.CreateSubnet(ctx, cfg, VPCs)
+
+		if err != nil {
+			return fmt.Errorf("main: resource creation failed %[1]w", err)
+		}
+
+		//Create Nat gateways inside our subnets
+		_, err = vpc.AddNat(ctx, cfg, subnets)
 
 		if err != nil {
 			return fmt.Errorf("main: resource creation failed %[1]w", err)
