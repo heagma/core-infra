@@ -9,8 +9,8 @@ import (
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
-//CreateVpc function creates a resource of type *ec2.VPC wraping the pulumi NewVPC constructor.
-func CreateVpc(ctx *pulumi.Context) ([]*ec2.VPC, error) {
+//CreateVpc function creates a resource of type *ec2.VPC wrapping the pulumi NewVPC constructor.
+func CreateVpc(ctx *pulumi.Context, cfg *config.DataConfig) ([]*ec2.VPC, error) {
 	var (
 		VPC             []*ec2.VPC
 		vpcLogicalNames []string
@@ -18,14 +18,12 @@ func CreateVpc(ctx *pulumi.Context) ([]*ec2.VPC, error) {
 	)
 
 	//Load configurations
-	cd := config.NewConfig(ctx)
-
-	configEnv := cd.Env
-	configRegion := cd.RegionAlias
+	configEnv := cfg.Env
+	configRegion := cfg.RegionAlias
 
 	//Assign configurations related only to vpc
-	configVpcCidrs := cd.VpcCidrs
-	configVpcNames := cd.VpcNames
+	configVpcCidrs := cfg.VpcCidrs
+	configVpcNames := cfg.VpcNames
 
 	//load initial tags
 	initialTags := config.NewInitialTags()
@@ -36,7 +34,8 @@ func CreateVpc(ctx *pulumi.Context) ([]*ec2.VPC, error) {
 
 	for _, vpcName := range configVpcNames {
 		//Define the names of each vpc resource. This is for logical resources (get id, arn etc.), physical names have a
-		//random suffix and also Create names (adding "-out" at the end of the vpc names) for the outputs names
+		//random suffix assigned by Pulumi.
+		//We also create output names (adding "-out" at the end of the vpc names) for the outputs names
 		vpcLogicalNames = append(vpcLogicalNames, config.FormatName(configEnv, configRegion, vpcName))
 		vpcOutputNames = append(vpcOutputNames, config.FormatName(vpcName, "out"))
 
