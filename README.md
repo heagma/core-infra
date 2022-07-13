@@ -1,4 +1,4 @@
-# edge-architecture (core-infra)
+# core-infra
 Building Cloud resources with Pulumi and the Go programming language.
 
 ## What is it for?
