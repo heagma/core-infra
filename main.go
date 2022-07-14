@@ -10,7 +10,7 @@ import (
 func main() {
 
 	pulumi.Run(func(ctx *pulumi.Context) error {
-		//load 'global' configurations
+		//load 'global' configurations to pass into each resource call
 		cfg := config.NewConfig(ctx)
 
 		//Create my vpc

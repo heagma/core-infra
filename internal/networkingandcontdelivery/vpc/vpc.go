@@ -2,7 +2,6 @@ package vpc
 
 import (
 	"core-infra/config"
-	"errors"
 	"fmt"
 	"github.com/pulumi/pulumi-aws-native/sdk/go/aws/ec2"
 	cec2 "github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
@@ -17,26 +16,14 @@ func CreateVpc(ctx *pulumi.Context, cfg *config.DataConfig) ([]*ec2.VPC, error) 
 		vpcOutputNames  []string
 	)
 
-	//Load configurations
-	configEnv := cfg.Env
-	configRegion := cfg.RegionAlias
-
-	//Assign configurations related only to vpc
-	configVpcCidrs := cfg.VpcCidrs
-	configVpcNames := cfg.VpcNames
-
 	//load initial tags
 	initialTags := config.NewInitialTags()
 
-	if len(configVpcCidrs) < len(configVpcNames) || len(configVpcCidrs) > len(configVpcNames) {
-		return nil, errors.New("CreateVpc: mismatch between the amount of vpc and the cidr configured")
-	}
-
-	for _, vpcName := range configVpcNames {
+	for _, vpcName := range cfg.VpcNames {
 		//Define the names of each vpc resource. This is for logical resources (get id, arn etc.), physical names have a
 		//random suffix assigned by Pulumi.
 		//We also create output names (adding "-out" at the end of the vpc names) for the outputs names
-		vpcLogicalNames = append(vpcLogicalNames, config.FormatName(configEnv, configRegion, vpcName))
+		vpcLogicalNames = append(vpcLogicalNames, config.FormatName(cfg.Env, cfg.RegionAlias, vpcName))
 		vpcOutputNames = append(vpcOutputNames, config.FormatName(vpcName, "out"))
 
 	}
@@ -45,12 +32,12 @@ func CreateVpc(ctx *pulumi.Context, cfg *config.DataConfig) ([]*ec2.VPC, error) 
 
 		//Create our VPC resources
 		vpc, err := ec2.NewVPC(ctx, vpcLogicalName, &ec2.VPCArgs{
-			CidrBlock:          pulumi.String(configVpcCidrs[index]),
+			CidrBlock:          pulumi.String(cfg.VpcCidrs[index]),
 			EnableDnsHostnames: pulumi.Bool(true),
 			Tags: ec2.VPCTagArrayInput(
 				ec2.VPCTagArray{
 					ec2.VPCTagArgs{Key: pulumi.String(initialTags.Name), Value: pulumi.String(vpcLogicalName)},
-					ec2.VPCTagArgs{Key: pulumi.String(initialTags.Env), Value: pulumi.String(configEnv)},
+					ec2.VPCTagArgs{Key: pulumi.String(initialTags.Env), Value: pulumi.String(cfg.Env)},
 				},
 			),
 		})
@@ -67,7 +54,7 @@ func CreateVpc(ctx *pulumi.Context, cfg *config.DataConfig) ([]*ec2.VPC, error) 
 			VpcId: vpc.ID(),
 			Tags: pulumi.StringMap{
 				initialTags.Name: pulumi.String(fmt.Sprintf("%[1]s-igw", vpcLogicalName)),
-				initialTags.Env:  pulumi.String(configEnv),
+				initialTags.Env:  pulumi.String(cfg.Env),
 			},
 		})
 

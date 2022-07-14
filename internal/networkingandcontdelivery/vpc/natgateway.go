@@ -1,7 +1,5 @@
 package vpc
 
-//Still pending the call to a subnet type to convert to string
-
 import (
 	"core-infra/config"
 	"fmt"
@@ -13,8 +11,6 @@ import (
 
 func AddNat(ctx *pulumi.Context, cfg *config.DataConfig, Subnets []*CustomSubnet) ([]*ec2.NatGateway, error) {
 	var NAT []*ec2.NatGateway
-
-	configEnv := cfg.Env
 
 	//load initial tags
 	initialTags := config.NewInitialTags()
@@ -31,7 +27,7 @@ func AddNat(ctx *pulumi.Context, cfg *config.DataConfig, Subnets []*CustomSubnet
 			eip, err := cec2.NewEip(ctx, eipTempName, &cec2.EipArgs{
 				Tags: pulumi.StringMap{
 					initialTags.Name: pulumi.String(eipTempName),
-					initialTags.Env:  pulumi.String(configEnv),
+					initialTags.Env:  pulumi.String(cfg.Env),
 				},
 			})
 
@@ -49,7 +45,7 @@ func AddNat(ctx *pulumi.Context, cfg *config.DataConfig, Subnets []*CustomSubnet
 							Value: pulumi.String(fmt.Sprintf("%[1]s-nat", subnet.logicalName)),
 						},
 						ec2.NatGatewayTagArgs{
-							Key: pulumi.String(initialTags.Env), Value: pulumi.String(configEnv),
+							Key: pulumi.String(initialTags.Env), Value: pulumi.String(cfg.Env),
 						},
 					}),
 			})
