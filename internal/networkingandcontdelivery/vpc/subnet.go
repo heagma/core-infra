@@ -11,11 +11,11 @@ import (
 //This allows us to create a new type of object that also include a name (there is no name field on ec2.Subnet) for our
 //subnets to be used as input in another caller instead of relying on ApplyT for Output<T> native from Pulumi.
 type CustomSubnet struct {
-	*ec2.Subnet
 	logicalName string
+	*ec2.Subnet
 }
 
-func CreateSubnet(ctx *pulumi.Context, cfg *config.DataConfig, vpc *ec2.VPC) ([]*CustomSubnet, error) {
+func CreateSubnet(ctx *pulumi.Context, cfg *config.DataConfig, vpc *CustomVPC) ([]*CustomSubnet, error) {
 	var (
 		Subnets            []*CustomSubnet
 		subnetLogicalNames []string
@@ -61,7 +61,7 @@ func CreateSubnet(ctx *pulumi.Context, cfg *config.DataConfig, vpc *ec2.VPC) ([]
 				return nil, fmt.Errorf("CreateSubnet: failed creating subnet resource %[1]w", err)
 			}
 
-			Subnets = append(Subnets, &CustomSubnet{subnet, subnetLogicalName})
+			Subnets = append(Subnets, &CustomSubnet{subnetLogicalName, subnet})
 
 			ctx.Export(subnetLogicalName, subnet.ID())
 
