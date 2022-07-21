@@ -3,10 +3,10 @@ Building Cloud resources with Pulumi and the Go programming language.
 
 ## What is it for?
 This repo contains the core-infra example of infrastructure created using the Go programming language together with Pulumi IaC.
-It creates resources that are needed to have the bare minimum to deploy quickly (day 1) some initial services.
+It creates resources that are needed to have the bare minimum to deploy (day 1) some initial services very quick.
 
-A day 2 operation is to add some more resources/services as per required on the business logic and those should live in a different repository.
-Those new deployments can be a new S3 bucket , a new Lambda function or even new services running on EKS but that needs to interact with some other AWS resources.
+A day 2 operation is just a matter of extending the core-infra and adding some more resources/services as per required 
+on the business logic. Those new services should live in different repositories.
 
 ## What is a bare minimum ?
 For different companies the bare minimum is most likely completely different, but many times, specially for companies just starting up in the cloud, an initial setup will require some minimum resources as follow:
@@ -19,9 +19,9 @@ For different companies the bare minimum is most likely completely different, bu
 + 3 Availability Zones per region.
 + 1 VPC on each Region:
   * 2 Subnets on each of the 3 AZ (3 Privates and 3 Publics).
-  * 1 Route Table for each Subnet.
+  * 1 Route Table for each Private Subnet (3 RT) and 1 general Route Table for all Public Subnets (1 RT).
   * 1 NAT Gateway on each Public Subnet.
-  * 1 Internet Gateways for each VPC.
+  * 1 Internet Gateway for each VPC.
 + 1 EKS Cluster per Region.
   * 3 workers nodes on each cluster.
   * 1 ELB per EKS cluster.
