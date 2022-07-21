@@ -14,7 +14,7 @@ func main() {
 		cfg := config.NewConfig(ctx)
 
 		//Create my vpc
-		VPCs, err := vpc.CreateVpc(ctx, cfg)
+		VPC, err := vpc.CreateVpc(ctx, cfg)
 
 		if err != nil {
 			return fmt.Errorf("main: resource creation failed %[1]w", err)
@@ -22,7 +22,7 @@ func main() {
 		}
 
 		//Create our Subnets within their respective VPC and AZ. We also create their respective NAT gateways
-		subnets, err := vpc.CreateSubnet(ctx, cfg, VPCs)
+		subnets, err := vpc.CreateSubnet(ctx, cfg, VPC)
 
 		if err != nil {
 			return fmt.Errorf("main: resource creation failed %[1]w", err)
@@ -36,7 +36,7 @@ func main() {
 		}
 
 		//Attach route table to subnets
-		//_, err := vpc.
+		_, err = vpc.CreateRouteTable(ctx, cfg, VPC, subnets)
 
 		return nil
 

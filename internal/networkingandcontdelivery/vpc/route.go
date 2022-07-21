@@ -1,36 +1,65 @@
 package vpc
 
-//
-//import (
-//	"core-infra/config"
-//	"fmt"
-//	"github.com/pulumi/pulumi-aws-native/sdk/go/aws/ec2"
-//	cec2 "github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
-//	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
-//)
-//
-////load initial tags
-//var initialTags = config.NewInitialTags()
-//
-//func CreateRouteTable(ctx *pulumi.Context, vpc *ec2.VPC, routeTableName string) (*cec2.RouteTable, error) {
-//	rt, err := cec2.NewRouteTable(ctx, routeTableName, &cec2.RouteTableArgs{
-//		VpcId: vpc.ID(),
-//		Tags: pulumi.StringMap{
-//			initialTags.Name: pulumi.String(routeTableName),
-//			initialTags.Env:  pulumi.String(configEnv),
-//		},
-//	})
-//	if err != nil {
-//		return nil, fmt.Errorf("RouteTable: failed creating route table resource %[1]w", err)
-//	}
-//	return rt, nil
-//}
-//
+import (
+	"core-infra/config"
+	"fmt"
+	cec2 "github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
+	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
+	"strconv"
+	"strings"
+)
+
+//load initial tags
+var initialTags = config.NewInitialTags()
+
+func CreateRouteTable(ctx *pulumi.Context, cfg *config.DataConfig, vpc *CustomVPC, subnets []*CustomSubnet) ([]*cec2.RouteTable, error) {
+	var rts []*cec2.RouteTable
+	const (
+		pubRtSuffix = "rt-public"
+		prvRtSuffix = "rt-private"
+	)
+	//Create the Route Table for all the public subnets
+	pubRtTempName := config.FormatName(vpc.logicalName, pubRtSuffix)
+	pubRt, err := cec2.NewRouteTable(ctx, pubRtTempName, &cec2.RouteTableArgs{
+		VpcId: vpc.ID(),
+		Tags: pulumi.StringMap{
+			initialTags.Name: pulumi.String(pubRtTempName),
+			initialTags.Env:  pulumi.String(cfg.Env),
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("RouteTable: failed creating public route table resource %[1]w", err)
+	}
+
+	rts = append(rts, pubRt)
+
+	//Create Route Tables for each Private Subnet
+	for i, subnet := range subnets {
+		if strings.HasSuffix(subnet.logicalName, "private") {
+			prvRtTempName := config.FormatName(vpc.logicalName, prvRtSuffix, strconv.Itoa(i))
+			prvRt, err := cec2.NewRouteTable(ctx, prvRtTempName, &cec2.RouteTableArgs{
+				VpcId: vpc.ID(),
+				Tags: pulumi.StringMap{
+					initialTags.Name: pulumi.String(prvRtTempName),
+					initialTags.Env:  pulumi.String(cfg.Env),
+				},
+			})
+			if err != nil {
+				return nil, fmt.Errorf("RouteTable: failed creating private route table resource %[1]w", err)
+			}
+			rts = append(rts, prvRt)
+		}
+	}
+
+	return rts, nil
+}
+
 //func CreateRoute() {
+//	pass
 //
 //}
 //
-////AttachRoute creates routes and associations
+////AssociateRouteTable associate a route table with an entity
 //func AssociateRouteTable() (ec2.RouteTable, error) {
-//
+//	pass
 //}
