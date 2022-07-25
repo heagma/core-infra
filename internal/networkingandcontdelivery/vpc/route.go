@@ -3,6 +3,7 @@ package vpc
 import (
 	"core-infra/config"
 	"fmt"
+	"github.com/pulumi/pulumi-aws-native/sdk/go/aws/ec2"
 	cec2 "github.com/pulumi/pulumi-aws/sdk/v5/go/aws/ec2"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 	"strconv"
@@ -33,6 +34,16 @@ func CreateRouteTable(ctx *pulumi.Context, cfg *config.DataConfig, vpc *CustomVP
 
 	rts = append(rts, pubRt)
 
+	//Create Routes for the public route table
+	_, err = ec2.NewRoute(ctx, "route", &ec2.RouteArgs{
+		RouteTableId:         pubRt.ID(),
+		DestinationCidrBlock: pulumi.String(cfg.VpcCidr),
+		GatewayId:            vpc.IGW.ID(),
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	//Create Route Tables for each Private Subnet
 	for i, subnet := range subnets {
 		if strings.HasSuffix(subnet.logicalName, "private") {
@@ -49,15 +60,14 @@ func CreateRouteTable(ctx *pulumi.Context, cfg *config.DataConfig, vpc *CustomVP
 			}
 			rts = append(rts, prvRt)
 		}
+
+		//Create Routes for each private subnet
+
 	}
 
 	return rts, nil
 }
 
-//func CreateRoute() {
-//	pass
-//
-//}
 //
 ////AssociateRouteTable associate a route table with an entity
 //func AssociateRouteTable() (ec2.RouteTable, error) {
