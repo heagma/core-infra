@@ -11,6 +11,7 @@ import (
 type CustomVPC struct {
 	logicalName string
 	*ec2.VPC
+	IGW *cec2.InternetGateway
 }
 
 //CreateVpc function creates a resource of type *ec2.VPC wrapping the pulumi NewVPC constructor.
@@ -46,11 +47,9 @@ func CreateVpc(ctx *pulumi.Context, cfg *config.DataConfig) (*CustomVPC, error) 
 		return nil, fmt.Errorf("CreateVpc: failed creating vpc resource %[1]w", err)
 	}
 
-	VPC = &CustomVPC{vpcLogicalName, vpc}
-
 	//Create our Internet Gateway for each VPC using the classic aws provider (alias cec2) as aws-native does not
 	//provide attachment to vpc yet. We reassign the 'err' variable
-	_, err = cec2.NewInternetGateway(ctx, fmt.Sprintf("%[1]s-igw", vpcLogicalName), &cec2.InternetGatewayArgs{
+	igw, err := cec2.NewInternetGateway(ctx, fmt.Sprintf("%[1]s-igw", vpcLogicalName), &cec2.InternetGatewayArgs{
 		VpcId: vpc.ID(),
 		Tags: pulumi.StringMap{
 			initialTags.Name: pulumi.String(fmt.Sprintf("%[1]s-igw", vpcLogicalName)),
@@ -61,6 +60,8 @@ func CreateVpc(ctx *pulumi.Context, cfg *config.DataConfig) (*CustomVPC, error) 
 	if err != nil {
 		return nil, fmt.Errorf("CreateVpc: failed creating igw resource %[1]w", err)
 	}
+
+	VPC = &CustomVPC{vpcLogicalName, vpc, igw}
 
 	ctx.Export(vpcOutputName, vpc.ID())
 
